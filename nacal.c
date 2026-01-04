@@ -67,7 +67,6 @@ int GetDaysInMonth(struct tm *today){
     return dim;
 }
 
-
 int PrintMonth(struct tm *today, int startY, int startX) {
   int y = startY;
   int x = startX;
@@ -133,7 +132,7 @@ void PrintTodo(FILE *fp, char* dayFile){
   while(fgets(buff,sizeof(buff),fp) != NULL) {
     buff[strcspn(buff,"\n")] = '\0';
     mvprintw(lastY,x,"| %s ",buff);
-    mvprintw(lastY++,x+todoSize+2," |");
+    mvprintw(lastY++,x+todoSize+2,"|");
   }
 
   /* Print bottom line */
