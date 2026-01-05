@@ -25,10 +25,29 @@ To create notes, create a folder and create files of the form YYYY-MM-DD.txt. If
 2024-1-24.txt
 ```
 
+If you want to add recurring notes, create the following files
+
+```
+recurring.txt
+```
+
+To specify when to apply the recurring notes, use $ plus the last three digits of crontab format. An example here:
+
+
+```
+This text always appears
+$ 1 1 *
+Only on the first of January
+$ * * 0
+This only
+on
+Saturdays
+```
+
 ## Compilation
 
 ```
-gcc -Wall -Wextra nacal.c -lncurses -o nacal
+make
 ```
 
 ```
@@ -45,3 +64,4 @@ gcc -Wall -Wextra nacal.c -lncurses -o nacal
 ## License
 
 This project is provided as-is for learning and personal use.
+
