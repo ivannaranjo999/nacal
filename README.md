@@ -1,8 +1,8 @@
 # nacal
 'nacal' is a lightweight TUI (Text User Interface) calendar written in C and ncurses.
-It allows you to navigate through a calendar and attach notes to individual days, all from the terminal.
+It allows you to navigate through a calendar and view notes for individual days, all from the terminal.
 
-The interface is keyboard-driven and designed to work in a UTF-8 terminal.
+The interface is keyboard-driven.
 
 ![Add anything to any day's note](./images/example1.png)
 
@@ -18,6 +18,13 @@ The interface is keyboard-driven and designed to work in a UTF-8 terminal.
 - C compiler (GCC or compatible)
 - ncurses
 
+## Creating notes
+To create notes, create a folder and create files of the form YYYY-MM-DD.txt. If the day or month has only one digit, do NOT add the zero:
+
+```
+2024-1-24.txt
+```
+
 ## Compilation
 
 ```
@@ -25,7 +32,7 @@ gcc -Wall -Wextra nacal.c -lncurses -o nacal
 ```
 
 ```
-./nacal
+./nacal <pathToFolderWithNotes>
 ```
 
 ## Basic controls
