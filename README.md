@@ -4,6 +4,10 @@ It allows you to navigate through a calendar and attach notes to individual days
 
 The interface is keyboard-driven and designed to work in a UTF-8 terminal.
 
+[Add anything to any day's note](./images/example1.png)
+
+[Even ASCII art!](./images/example2.png)
+
 ## Features
 - Terminal-based calendar (TUI)
 - Navigate days and months
