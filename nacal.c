@@ -114,10 +114,22 @@ int PrintMonth(struct tm *today, int startY, int startX) {
 
 void PrintTodo(FILE *fp, char* dayFile){
   const int x = 32;
-  const int todoSize = MAXX-x-6;
+  const size_t todoSize = MAXX-x-6;
+  const size_t fileHeaderSize = todoSize/2;
   int lastY = 2;
-  int i;
+  size_t i;
   char buff[todoSize];
+  char headerName[fileHeaderSize];
+
+  memset (headerName,0,sizeof(headerName));
+  if (strlen(dayFile) > fileHeaderSize) {
+    for (int j = 0; j < 3; ++j){
+      headerName[j]='.';
+    }
+    memcpy(&headerName[3], dayFile + strlen(dayFile) - fileHeaderSize+3, sizeof(headerName));
+  } else {
+    memcpy(headerName, dayFile, sizeof(headerName));
+  }
 
   /* Print top line */
   mvprintw(lastY,x,"+");
@@ -125,7 +137,7 @@ void PrintTodo(FILE *fp, char* dayFile){
     mvprintw(lastY,x+i,"-");
   }
   mvprintw(lastY,x+i,"+");
-  mvprintw(lastY,x+3,"File-\"%s\"",dayFile);
+  mvprintw(lastY,x+3,"File-\"%s\"",headerName);
   lastY++;
 
   /* Print content */
@@ -240,7 +252,7 @@ int SelectDate(struct tm *selectTm){
   return returnValue;
 }
 
-int main() {
+int main(int argc, char *argv[]) {
   time_t currentDate = time(NULL);
   struct tm t = *localtime(&currentDate);
   struct tm selectTm = *localtime(&currentDate);
@@ -248,7 +260,14 @@ int main() {
   int dim = GetDaysInMonth(&t);
   int toClear = 0;
   int ch, lastY;
-  char dayFile[64];
+  char dayFile[256];
+  char pathToNotes[128]="";
+  if (argc == 2) {
+    strcpy(pathToNotes,argv[1]);
+  } else if (argc > 2){
+    printf("Too many arguments\n");
+    return 0;
+  }
 
   setlocale(LC_ALL, "");
   initscr();
@@ -270,21 +289,20 @@ int main() {
     lastY = PrintMonth(&t, 1, 0);
 
     /* Open day file if existing */
-    sprintf(dayFile, "notes/%d-%d-%d.txt",t.tm_year+1900,t.tm_mon+1,t.tm_mday);
+    sprintf(dayFile, "%s%d-%d-%d.txt",pathToNotes,t.tm_year+1900,t.tm_mon+1,t.tm_mday);
     FILE* fp = fopen(dayFile,"r");
-    if (fp == NULL){
-      mvprintw(lastY+1,0,"%s missing ", dayFile);
-    } else {
-      toClear=1; 
+    if (fp != NULL){
+      toClear=1;
       PrintTodo(fp,dayFile);
     }
 
-    mvprintw(lastY+3,0,"Instructions:");
-    mvprintw(lastY+4,2,"* Move with \'hjkl\'");
-    mvprintw(lastY+5,2,"* Change month with \'pn\'");
-    mvprintw(lastY+6,2,"* Select date with \'s\'");
-    mvprintw(lastY+7,2,"* Select today with \'t\'");
-    mvprintw(lastY+8,2,"* Exit with \'q\'");
+    lastY++;
+    mvprintw(lastY++,0,"Instructions:");
+    mvprintw(lastY++,2,"* Move with \'hjkl\'");
+    mvprintw(lastY++,2,"* Change month with \'pn\'");
+    mvprintw(lastY++,2,"* Select date with \'s\'");
+    mvprintw(lastY++,2,"* Select today with \'t\'");
+    mvprintw(lastY++,2,"* Exit with \'q\'");
 
     refresh();
 
