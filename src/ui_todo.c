@@ -51,8 +51,8 @@ void PrintRecurringTodo(int *lastY, FILE *fp, struct tm *today) {
         (today->tm_mon  == cronMonthV   || cronMonthV   == -1) &&
         (today->tm_wday == cronWeekdayV || cronWeekdayV == -1)) {
       buff[strcspn(buff,"\n")] = '\0';
-      mvprintw(*lastY,x,"| %s ",buff);
-      mvprintw(*lastY,x+todoSize+2,"|");
+      mvprintw(*lastY,x,"%s %s ",VERTICAL_LINE,buff);
+      mvprintw(*lastY,x+todoSize+2,"%s",VERTICAL_LINE);
       *lastY = *lastY + 1;
       }
     }
@@ -78,22 +78,22 @@ void PrintTodo(FILE *fp, FILE *fpRecurring, char* dayFile, struct tm *today){
     memcpy(headerName, dayFile, sizeof(headerName));
   }
 
-  mvprintw(lastY,x,"+");
+  mvprintw(lastY,x,"%s",TL_CORNER);
   for (i = 1; i<todoSize+2 ; ++i){
-    mvprintw(lastY,x+i,"-");
+    mvprintw(lastY,x+i,"%s",HORIZONTAL_LINE);
   }
-  mvprintw(lastY,x+i,"+");
-  mvprintw(lastY,x+3,"File-\"%s\"",headerName);
+  mvprintw(lastY,x+3,"File \"%s\"",headerName);
+  mvprintw(lastY,x+i,"%s",TR_CORNER);
   lastY++;
 
   if (fpRecurring != NULL){
     PrintRecurringTodo(&lastY,fpRecurring, today);
     if (fp != NULL) {
-    mvprintw(lastY,x,"|");
+    mvprintw(lastY,x,"%s",LVERTICAL_DLINE);
       for (i = 1; i<todoSize+2 ; ++i){
-        mvprintw(lastY,x+i,"=");
+        mvprintw(lastY,x+i,"%s",HORIZONTAL_DLINE);
       }
-    mvprintw(lastY,x+i,"|");
+    mvprintw(lastY,x+i,"%s",RVERTICAL_DLINE);
     lastY++;
     }
   }
@@ -101,16 +101,16 @@ void PrintTodo(FILE *fp, FILE *fpRecurring, char* dayFile, struct tm *today){
   if (fp != NULL) { 
     while(fgets(buff,sizeof(buff),fp) != NULL) {
       buff[strcspn(buff,"\n")] = '\0';
-      mvprintw(lastY,x,"| %s ",buff);
-      mvprintw(lastY++,x+todoSize+2,"|");
+      mvprintw(lastY,x,"%s %s ",VERTICAL_LINE,buff);
+      mvprintw(lastY++,x+todoSize+2,"%s",VERTICAL_LINE);
     }
   }
 
-  mvprintw(lastY,x,"+");
+  mvprintw(lastY,x,"%s",BL_CORNER);
   for (i = 1; i<todoSize+2 ; ++i){
-    mvprintw(lastY,x+i,"-");
+    mvprintw(lastY,x+i,"%s",HORIZONTAL_LINE);
   }
-  mvprintw(lastY,x+i,"+");
+  mvprintw(lastY,x+i,"%s",BR_CORNER);
   if (fp != NULL) fclose(fp);
   if (fpRecurring != NULL) fclose(fpRecurring);
 }
