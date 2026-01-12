@@ -21,8 +21,25 @@ int main(int argc, char *argv[]) {
   char dayFile[256];
   char recurringFile[256];
   char pathToNotes[128]="";
+  size_t len = 0;
 
-  if (argc == 2) strcpy(pathToNotes,argv[1]);
+  static int test = 0;
+
+  if (argc == 2) {
+    len = strlen(argv[1]);
+
+    if (len + 2 > 128){
+      return 1;
+    }
+    
+    strcpy(pathToNotes,argv[1]);
+
+    if (len > 0 && pathToNotes[len-1] != '/'){
+      pathToNotes[len] = '/';
+      pathToNotes[len+1] = '\0';
+    }
+
+  }
   else if (argc > 2) return 0;
 
   setlocale(LC_ALL, "");
@@ -34,7 +51,9 @@ int main(int argc, char *argv[]) {
   getmaxyx(stdscr,MAXY,MAXX);
   if (MAXX > 100) MAXX = 100;
 
+
   while(1){
+    test++;
     mvprintw(0, 0, "%d", t.tm_year + 1900);
     lastY = PrintMonth(&t, 1, 0);
 
