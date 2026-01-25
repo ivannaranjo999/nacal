@@ -65,7 +65,7 @@ int main(int argc, char *argv[]) {
   initscr();
   cbreak();
   noecho();
-  timeout(50);
+  timeout(150);
   keypad(stdscr, TRUE);
   curs_set(0);
   getmaxyx(stdscr,MAXY,MAXX);

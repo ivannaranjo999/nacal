@@ -68,14 +68,18 @@ void PrintTodo(FILE *fp, FILE *fpRecurring, char* dayFile, struct tm *today){
   size_t i;
   int lastY = 2;
   char buff[todoSize];
-  char headerName[fileHeaderSize];
+  char headerName[fileHeaderSize+1];
+  size_t nameLen = strlen(dayFile);
+  size_t idx;
+  static size_t scrollOffset = 0;
 
   memset (headerName,0,sizeof(headerName));
-  if (strlen(dayFile) > fileHeaderSize) {
-    for (int j = 0; j < 3; ++j){
-      headerName[j]='.';
+  if (nameLen > fileHeaderSize) {
+    for (i = 0; i < fileHeaderSize; ++i) {
+      idx = (scrollOffset + i) % (nameLen + 1); // one extra for space
+      headerName[i] = (idx == nameLen) ? ' ' : dayFile[idx];
     }
-    memcpy(&headerName[3], dayFile + strlen(dayFile) - fileHeaderSize+3, sizeof(headerName));
+    scrollOffset = (scrollOffset + 1) % nameLen;
   } else {
     memcpy(headerName, dayFile, sizeof(headerName));
   }
