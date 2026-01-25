@@ -19,6 +19,8 @@ void PrintRecurringTodo(int *lastY, FILE *fp, struct tm *today) {
   int cronMonthV = -1;
   int cronWeekdayV = -1;
 
+  rewind(fp);
+
   while(fgets(buff,sizeof(buff),fp) != NULL) {
     /* Parse special conditions */
     if (buff[0] == '$' && 
@@ -89,16 +91,17 @@ void PrintTodo(FILE *fp, FILE *fpRecurring, char* dayFile, struct tm *today){
   if (fpRecurring != NULL){
     PrintRecurringTodo(&lastY,fpRecurring, today);
     if (fp != NULL) {
-    mvprintw(lastY,x,"%s",LVERTICAL_DLINE);
-      for (i = 1; i<todoSize+2 ; ++i){
-        mvprintw(lastY,x+i,"%s",HORIZONTAL_DLINE);
-      }
-    mvprintw(lastY,x+i,"%s",RVERTICAL_DLINE);
-    lastY++;
+      mvprintw(lastY,x,"%s",LVERTICAL_DLINE);
+        for (i = 1; i<todoSize+2 ; ++i){
+          mvprintw(lastY,x+i,"%s",HORIZONTAL_DLINE);
+        }
+      mvprintw(lastY,x+i,"%s",RVERTICAL_DLINE);
+      lastY++;
     }
   }
 
   if (fp != NULL) { 
+    rewind(fp);
     while(fgets(buff,sizeof(buff),fp) != NULL) {
       buff[strcspn(buff,"\n")] = '\0';
       mvprintw(lastY,x,"%s %s ",VERTICAL_LINE,buff);
@@ -111,7 +114,5 @@ void PrintTodo(FILE *fp, FILE *fpRecurring, char* dayFile, struct tm *today){
     mvprintw(lastY,x+i,"%s",HORIZONTAL_LINE);
   }
   mvprintw(lastY,x+i,"%s",BR_CORNER);
-  if (fp != NULL) fclose(fp);
-  if (fpRecurring != NULL) fclose(fpRecurring);
 }
 

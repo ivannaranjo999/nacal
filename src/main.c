@@ -9,6 +9,26 @@
 int MAXX;
 int MAXY;
 
+void OpenDayFile(FILE **fp, char *filename, const char *path, 
+  const struct tm *t){
+
+  char newFile[PATH_MAX];
+
+  sprintf(newFile, "%s%d-%d-%d.txt",path,t->tm_year+1900,t->tm_mon+1,
+    t->tm_mday);
+
+  /* If its a new file, close previous and open new */
+  if (strcmp(newFile,filename) != 0){
+    if (*fp) {
+      fclose(*fp);
+      *fp = NULL;
+    }
+
+    strcpy(filename,newFile);
+    *fp = fopen(filename,"r");
+  }
+}
+
 int main(int argc, char *argv[]) {
   time_t currentDate = time(NULL);
   struct tm t = *localtime(&currentDate);
@@ -18,20 +38,19 @@ int main(int argc, char *argv[]) {
   int dim = GetDaysInMonth(&t);
   int toClear = 0;
   int ch, lastY;
-  char dayFile[256];
-  char recurringFile[256];
-  char pathToNotes[128]="";
+  char dayFile[PATH_MAX] = "";
+  char recurringFile[PATH_MAX] = "";
+  char pathToNotes[PATH_MAX/2] = "";
   size_t len = 0;
-
-  static int test = 0;
+  FILE *fpDay = NULL;
 
   if (argc == 2) {
     len = strlen(argv[1]);
 
-    if (len + 2 > 128){
+    if (len + 2 > PATH_MAX/2){
       return 1;
     }
-    
+
     strcpy(pathToNotes,argv[1]);
 
     if (len > 0 && pathToNotes[len-1] != '/'){
@@ -46,25 +65,24 @@ int main(int argc, char *argv[]) {
   initscr();
   cbreak();
   noecho();
+  timeout(50);
   keypad(stdscr, TRUE);
   curs_set(0);
   getmaxyx(stdscr,MAXY,MAXX);
   if (MAXX > 100) MAXX = 100;
 
+  sprintf(recurringFile, "%srecurring.txt",pathToNotes);
+  FILE* fpRecurring = fopen(recurringFile,"r");
 
   while(1){
-    test++;
     mvprintw(0, 0, "%d", t.tm_year + 1900);
     lastY = PrintMonth(&t, 1, 0);
 
-    sprintf(dayFile, "%s%d-%d-%d.txt",pathToNotes,t.tm_year+1900,t.tm_mon+1,t.tm_mday);
-    FILE* fp = fopen(dayFile,"r");
-    sprintf(recurringFile, "%srecurring.txt",pathToNotes);
-    FILE* fpRecurring = fopen(recurringFile,"r");
+    OpenDayFile(&fpDay,dayFile,pathToNotes,&t);
 
-    if (fp != NULL || fpRecurring != NULL){
+    if (fpDay || fpRecurring ){
       toClear=1;
-      PrintTodo(fp,fpRecurring,dayFile,&t);
+      PrintTodo(fpDay,fpRecurring,dayFile,&t);
     }
 
     lastY++;
@@ -75,7 +93,8 @@ int main(int argc, char *argv[]) {
     mvprintw(lastY++,2,"* Select today with 't'");
     mvprintw(lastY++,2,"* Exit with 'q'");
 
-    refresh();
+    wnoutrefresh(stdscr);
+    doupdate();
     ch = getch();
     if (ch == 'q') break;
 
@@ -86,12 +105,15 @@ int main(int argc, char *argv[]) {
       case 'j': if(t.tm_mday+7<=dim){t.tm_mday+=7; mktime(&t);} break;
       case 'p': t.tm_mon--; if(t.tm_mon<0){t.tm_mon=11; t.tm_year--;} mktime(&t); toClear=1; break;
       case 'n': t.tm_mon++; if(t.tm_mon>=12){t.tm_mon=0; t.tm_year++;} mktime(&t); toClear=1; break;
-      case 's': if(SelectDate(&selectTm)==0){t=selectTm; toClear=1;} break;
+      case 's': timeout(-1); if(SelectDate(&selectTm)==0){t=selectTm; toClear=1;}; timeout(50); break;
       case 't': t=originalTm; toClear=1; break;
     }
 
-    if (toClear){ clear(); toClear=0; }
+    if (toClear){ erase(); toClear=0; }
   }
+
+  if (fpRecurring) fclose(fpRecurring);
+  if (fpDay) fclose(fpDay);
 
   endwin();
   return 0;

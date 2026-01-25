@@ -8,7 +8,7 @@ int SelectDate(struct tm *selectTm){
   size_t selectLen;
   char selectBuf[8];
 
-  clear();
+  erase();
   mvprintw(0,0,"Select year:");
   refresh();
   move(0, 13);
