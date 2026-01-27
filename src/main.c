@@ -9,6 +9,10 @@
 int MAXX;
 int MAXY;
 
+void HelpPrint(char *filename){
+  printf("Usage: %s path/to/folder\n",filename);
+}
+
 void OpenDayFile(FILE **fp, char *filename, const char *path, 
   const struct tm *t){
 
@@ -59,7 +63,10 @@ int main(int argc, char *argv[]) {
     }
 
   }
-  else if (argc > 2) return 0;
+  else {
+    HelpPrint(argv[0]);
+    return 2;
+  }
 
   setlocale(LC_ALL, "");
   initscr();
