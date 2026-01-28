@@ -90,6 +90,11 @@ int main(int argc, char *argv[]) {
     if (fpDay || fpRecurring ){
       toClear=1;
       PrintTodo(fpDay,fpRecurring,dayFile,&t);
+    } else if (!fpDay && !fpRecurring){
+      mvprintw(4,32,"Create %d-%d-%d.txt",
+        t.tm_year+1900,t.tm_mon+1,t.tm_mday);
+      mvprintw(5,32,"to open 'todo' window");
+      toClear = 1;
     }
 
     lastY++;
@@ -106,14 +111,16 @@ int main(int argc, char *argv[]) {
     if (ch == 'q') break;
 
     switch (ch) {
-      case 'h': if(t.tm_mday>1){t.tm_mday--; mktime(&t);} break;
-      case 'l': if(t.tm_mday<dim){t.tm_mday++; mktime(&t);} break;
-      case 'k': if(t.tm_mday>7){t.tm_mday-=7; mktime(&t);} break;
-      case 'j': if(t.tm_mday+7<=dim){t.tm_mday+=7; mktime(&t);} break;
+      case KEY_LEFT_CODE: case 'h': if(t.tm_mday>1){t.tm_mday--; mktime(&t);} break;
+      case KEY_RIGHT_CODE: case 'l': if(t.tm_mday<dim){t.tm_mday++; mktime(&t);} break;
+      case KEY_UP_CODE: case 'k': if(t.tm_mday>7){t.tm_mday-=7; mktime(&t);} break;
+      case KEY_DOWN_CODE: case 'j': if(t.tm_mday+7<=dim){t.tm_mday+=7; mktime(&t);} break;
       case 'p': t.tm_mon--; if(t.tm_mon<0){t.tm_mon=11; t.tm_year--;} mktime(&t); toClear=1; break;
       case 'n': t.tm_mon++; if(t.tm_mon>=12){t.tm_mon=0; t.tm_year++;} mktime(&t); toClear=1; break;
-      case 's': timeout(-1); if(SelectDate(&selectTm)==0){t=selectTm; toClear=1;}; timeout(50); break;
+      case 's': timeout(-1); SelectDate(&selectTm);t=selectTm; toClear=1; timeout(50); break;
       case 't': t=originalTm; toClear=1; break;
+      default: mvprintw(lastY++,2,"* Detected key press!%d",ch); break;
+    
     }
 
     if (toClear){ erase(); toClear=0; }
