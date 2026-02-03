@@ -72,7 +72,7 @@ int main(int argc, char *argv[]) {
   initscr();
   cbreak();
   noecho();
-  timeout(150);
+  timeout(TIMEOUT);
   keypad(stdscr, TRUE);
   curs_set(0);
   getmaxyx(stdscr,MAXY,MAXX);
@@ -117,7 +117,7 @@ int main(int argc, char *argv[]) {
       case KEY_DOWN_CODE: case 'j': if(t.tm_mday+7<=dim){t.tm_mday+=7; mktime(&t);} break;
       case 'p': t.tm_mday = 1 ; t.tm_mon--; if(t.tm_mon<0){t.tm_mon=11; t.tm_year--;} mktime(&t); dim = GetDaysInMonth(&t); toClear=1; break;
       case 'n': t.tm_mday = 1 ; t.tm_mon++; if(t.tm_mon>=12){t.tm_mon=0; t.tm_year++;} mktime(&t); dim = GetDaysInMonth(&t); toClear=1; break;
-      case 's': timeout(-1); SelectDate(&selectTm);t=selectTm; dim = GetDaysInMonth(&t); toClear=1; timeout(50); break;
+      case 's': timeout(-1); SelectDate(&selectTm);t=selectTm; dim = GetDaysInMonth(&t); toClear=1; timeout(TIMEOUT); break;
       case 't': t=originalTm; dim = GetDaysInMonth(&t); toClear=1; break;
       default: mvprintw(lastY++,2,"* Detected key press!%d",ch); break;
     
