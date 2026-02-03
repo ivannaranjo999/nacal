@@ -115,10 +115,10 @@ int main(int argc, char *argv[]) {
       case KEY_RIGHT_CODE: case 'l': if(t.tm_mday<dim){t.tm_mday++; mktime(&t);} break;
       case KEY_UP_CODE: case 'k': if(t.tm_mday>7){t.tm_mday-=7; mktime(&t);} break;
       case KEY_DOWN_CODE: case 'j': if(t.tm_mday+7<=dim){t.tm_mday+=7; mktime(&t);} break;
-      case 'p': t.tm_mon--; if(t.tm_mon<0){t.tm_mon=11; t.tm_year--;} mktime(&t); toClear=1; break;
-      case 'n': t.tm_mon++; if(t.tm_mon>=12){t.tm_mon=0; t.tm_year++;} mktime(&t); toClear=1; break;
-      case 's': timeout(-1); SelectDate(&selectTm);t=selectTm; toClear=1; timeout(50); break;
-      case 't': t=originalTm; toClear=1; break;
+      case 'p': t.tm_mday = 1 ; t.tm_mon--; if(t.tm_mon<0){t.tm_mon=11; t.tm_year--;} mktime(&t); dim = GetDaysInMonth(&t); toClear=1; break;
+      case 'n': t.tm_mday = 1 ; t.tm_mon++; if(t.tm_mon>=12){t.tm_mon=0; t.tm_year++;} mktime(&t); dim = GetDaysInMonth(&t); toClear=1; break;
+      case 's': timeout(-1); SelectDate(&selectTm);t=selectTm; dim = GetDaysInMonth(&t); toClear=1; timeout(50); break;
+      case 't': t=originalTm; dim = GetDaysInMonth(&t); toClear=1; break;
       default: mvprintw(lastY++,2,"* Detected key press!%d",ch); break;
     
     }
