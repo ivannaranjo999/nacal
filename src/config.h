@@ -8,6 +8,7 @@
 #define KEY_DOWN_CODE 258
 #define KEY_LEFT_CODE 260
 #define KEY_RIGHT_CODE 261
+#define TIMEOUT 150
 
 extern int MAXX;
 extern int MAXY;
