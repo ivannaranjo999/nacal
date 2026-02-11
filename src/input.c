@@ -26,7 +26,7 @@ void SelectDate(struct tm *selectTm){
 
   selectValue = atoi(selectBuf) - 1900;
   if (selectValue < 0 || selectValue > 1100) errorDetected = 1;
-  selectTm->tm_year = selectValue;
+  if (errorDetected == 0) selectTm->tm_year = selectValue;
 
   if (errorDetected == 0){
     mvprintw(2,0,"Select month:");
